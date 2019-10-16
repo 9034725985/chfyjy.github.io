@@ -38,13 +38,13 @@
 <div class="toc">
 <h3><a name="toc">Contents</a></h3>
 <ul>
-<li class="level1"><a href="#the-animation-architecture">The Animation Architecture</a></li>
-<li class="level1"><a href="#classes-in-the-animation-framework">Classes in the Animation Framework</a></li>
-<li class="level1"><a href="#animating-qt-properties">Animating Qt Properties</a></li>
-<li class="level1"><a href="#animations-and-the-graphics-view-framework">Animations and the Graphics View Framework</a></li>
-<li class="level1"><a href="#easing-curves">Easing Curves</a></li>
-<li class="level1"><a href="#putting-animations-together">Putting Animations Together</a></li>
-<li class="level1"><a href="#animations-and-states">Animations and States</a></li>
+<li class="level1"><a href="#the-animation-architecture">动画架构</a></li>
+<li class="level1"><a href="#classes-in-the-animation-framework">动画框架中的类</a></li>
+<li class="level1"><a href="#animating-qt-properties">动画的属性</a></li>
+<li class="level1"><a href="#animations-and-the-graphics-view-framework">动画和图形视图框架</a></li>
+<li class="level1"><a href="#easing-curves">缓动曲线</a></li>
+<li class="level1"><a href="#putting-animations-together">动画组</a></li>
+<li class="level1"><a href="#animations-and-states">动画与状态机</a></li>
 </ul>
 </div>
 <div class="sidebar-content" id="sidebar-content"></div></div>
@@ -52,35 +52,35 @@
 <span class="subtitle"></span>
 <!-- $$$animation-overview.html-description -->
 <div class="descr"> <a name="details"></a>
-<p>The animation framework aims to provide an easy way for creating animated and smooth GUIs. By animating Qt properties, the framework provides great freedom for animating widgets and other <a href="qobject.html">QObject</a>s. The framework can also be used with the Graphics View framework. Many of the concepts available in the animation framework are also available in <a href="../qtquick/qtquick-index.html">Qt Quick</a>, where it offers a declarative way of defining animations. Much of the knowledge acquired about the animation framework can be applied to <a href="../qtquick/qtquick-index.html">Qt Quick</a>.</p>
-<p>In this overview, we explain the basics of its architecture. We also show examples of the most common techniques that the framework allows for animating <a href="qobject.html">QObject</a>s and graphics items.</p>
+<p>动画框架目标在于提供一种简便的方式来创建动态的,流畅的GUI.对于动画部件和其他的<a href="qobject.html">QObject</a>框架通过动画属性提供了很不错的自由度.动画框架也可以用于图形视图框架.<a href="../qtquick/qtquick-index.html">Qt Quick</a>通过一种声明式定义动画的方法使许多应用在动画框架的概念同样适用.通过动画框架所知的大部分都能应用在<a href="../qtquick/qtquick-index.html">Qt Quick</a>.</p>
+<p>以下概述中解释了架构的基础知识.也展示了框架允许的对<a href="qobject.html">QObject</a>和图形项动画化最常用技术的示例.</p>
 <a name="the-animation-architecture"></a>
-<h2 id="the-animation-architecture">The Animation Architecture</h2>
-<p>We will in this section take a high-level look at the animation framework's architecture and how it is used to animate Qt properties. The following diagram shows the most important classes in the animation framework.</p>
-<p class="centerAlign"><img src="images/animations-architecture.png" alt="" /></p><p>The animation framework foundation consists of the base class <a href="qabstractanimation.html">QAbstractAnimation</a>, and its two subclasses <a href="qvariantanimation.html">QVariantAnimation</a> and <a href="qanimationgroup.html">QAnimationGroup</a>. <a href="qabstractanimation.html">QAbstractAnimation</a> is the ancestor of all animations. It represents basic properties that are common for all animations in the framework; notably, the ability to start, stop, and pause an animation. It is also receives the time change notifications.</p>
-<p>The animation framework further provides the <a href="qpropertyanimation.html">QPropertyAnimation</a> class, which inherits <a href="qvariantanimation.html">QVariantAnimation</a> and performs animation of a Qt property, which is part of Qt's <a href="metaobjects.html">meta-object system</a>. The class performs an interpolation over the property using an easing curve. So when you want to animate a value, you can declare it as a property and make your class a <a href="qobject.html">QObject</a>. Note that this gives us great freedom in animating already existing widgets and other <a href="qobject.html">QObject</a>s.</p>
-<p>Complex animations can be constructed by building a tree structure of <a href="qabstractanimation.html">QAbstractAnimation</a>s. The tree is built by using <a href="qanimationgroup.html">QAnimationGroup</a>s, which function as containers for other animations. Note also that the groups are subclasses of <a href="qabstractanimation.html">QAbstractAnimation</a>, so groups can themselves contain other groups.</p>
-<p>The animation framework can be used on its own, but is also designed to be part of the state machine framework (See the <a href="statemachine-api.html">state machine framework</a> for an introduction to the Qt state machine). The state machine provides a special state that can play an animation. A <a href="qstate.html">QState</a> can also set properties when the state is entered or exited, and this special animation state will interpolate between these values when given a <a href="qpropertyanimation.html">QPropertyAnimation</a>. We will look more closely at this later.</p>
-<p>Behind the scenes, the animations are controlled by a global timer, which sends <a href="qabstractanimation.html#updateCurrentTime">updates</a> to all animations that are playing.</p>
-<p>For detailed descriptions of the classes' function and roles in the framework, please look up their class descriptions.</p>
+<h2 id="the-animation-architecture">动画架构</h2>
+<p>这部分将高度概括动画框架的架构和如何使用动画属性.下图展示了动画框架中最重要的一些类.</p>
+<p class="centerAlign"><img src="images/animations-architecture.png" alt="" /></p><p>动画框架由基类<a href="qabstractanimation.html">QAbstractAnimation</a>,和它的两个字类<a href="qvariantanimation.html">QVariantAnimation</a>和<a href="qanimationgroup.html">QAnimationGroup</a>组成. <a href="qabstractanimation.html">QAbstractAnimation</a>是所有动画类的祖先.它代表了框架内所有动画类共有的基础属性;特别是它能开始,停止,暂停动画,也能接收时间改变的通知.</p>
+<p>动画框架进一步提供了<a href="qpropertyanimation.html">QPropertyAnimation</a>类,它继承自<a href="qvariantanimation.html">QVariantAnimation</a>和执行动画的Qt属性,是Qt的<a href="metaobjects.html">meta-object system(元对象系统)</a>的一部分.QPropertyAnimation使用缓动曲线对属性插值.所以想要动画一个值时可以将它声明为一个属性,并使拥有该属性的类成为<a href="qobject.html">QObject</a>类.这样使在动画一个已经存在的部件或其他<a href="qobject.html">QObject</a>变得非常方便.</p>
+<p>可以通过构造树形结构的<a href="qabstractanimation.html">QAbstractAnimation</a>构造复杂动画.这个树形结构由<a href="qanimationgroup.html">QAnimationGroup</a>组建,在结构中QAnimationGroup作为其他动画的容器.特别地,QAnimationGroup是<a href="qabstractanimation.html">QAbstractAnimation</a>的子类,所以QAnimationGroup可以包含QAnimationGroup自身.</p>
+<p>动画框架可以单独使用,但同时它也被设计为状态机框架的一部分(在<a href="statemachine-api.html">state machine framework页</a>对状态机进行了介绍).状态机提供一个可以播放动画的特别状态.<a href="qstate.html">QState</a>在进入或退出时也可以设置属性,并且这个特殊的动画状态会插入到给定的一组<a href="qpropertyanimation.html">QPropertyAnimation</a>.稍后会更加详细了解.</p>
+<p>在幕后,动画由全局定时器向正在播放的动画发送<a href="qabstractanimation.html#updateCurrentTime">updates</a>来控制.</p>
+<p>框架内类更详细的的功能和用法可以在它们类的描述中找到.</p>
 <a name="classes-in-the-animation-framework"></a>
-<h2 id="classes-in-the-animation-framework">Classes in the Animation Framework</h2>
-<p>These classes provide a framework for creating both simple and complex animations.</p>
+<h2 id="classes-in-the-animation-framework">框架中的类</h2>
+<p>这些类提供了创造简单和复杂动画的框架.</p>
 <div class="table"><table class="annotated">
-<tr class="odd topAlign"><td class="tblName"><p><a href="qabstractanimation.html">QAbstractAnimation</a></p></td><td class="tblDescr"><p>The base of all animations</p></td></tr>
-<tr class="even topAlign"><td class="tblName"><p><a href="qanimationgroup.html">QAnimationGroup</a></p></td><td class="tblDescr"><p>Abstract base class for groups of animations</p></td></tr>
-<tr class="odd topAlign"><td class="tblName"><p><a href="qeasingcurve.html">QEasingCurve</a></p></td><td class="tblDescr"><p>Easing curves for controlling animation</p></td></tr>
-<tr class="even topAlign"><td class="tblName"><p><a href="qparallelanimationgroup.html">QParallelAnimationGroup</a></p></td><td class="tblDescr"><p>Parallel group of animations</p></td></tr>
-<tr class="odd topAlign"><td class="tblName"><p><a href="qpauseanimation.html">QPauseAnimation</a></p></td><td class="tblDescr"><p>Pause for QSequentialAnimationGroup</p></td></tr>
-<tr class="even topAlign"><td class="tblName"><p><a href="qpropertyanimation.html">QPropertyAnimation</a></p></td><td class="tblDescr"><p>Animates Qt properties</p></td></tr>
-<tr class="odd topAlign"><td class="tblName"><p><a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a></p></td><td class="tblDescr"><p>Sequential group of animations</p></td></tr>
-<tr class="even topAlign"><td class="tblName"><p><a href="qtimeline.html">QTimeLine</a></p></td><td class="tblDescr"><p>Timeline for controlling animations</p></td></tr>
-<tr class="odd topAlign"><td class="tblName"><p><a href="qvariantanimation.html">QVariantAnimation</a></p></td><td class="tblDescr"><p>Base class for animations</p></td></tr>
+<tr class="odd topAlign"><td class="tblName"><p><a href="qabstractanimation.html">QAbstractAnimation</a></p></td><td class="tblDescr"><p>所有动画类的基础</p></td></tr>
+<tr class="even topAlign"><td class="tblName"><p><a href="qanimationgroup.html">QAnimationGroup</a></p></td><td class="tblDescr"><p>组动画的抽象基类</p></td></tr>
+<tr class="odd topAlign"><td class="tblName"><p><a href="qeasingcurve.html">QEasingCurve</a></p></td><td class="tblDescr"><p>控制动画的缓动曲线</p></td></tr>
+<tr class="even topAlign"><td class="tblName"><p><a href="qparallelanimationgroup.html">QParallelAnimationGroup</a></p></td><td class="tblDescr"><p>平行动画组</p></td></tr>
+<tr class="odd topAlign"><td class="tblName"><p><a href="qpauseanimation.html">QPauseAnimation</a></p></td><td class="tblDescr"><p>暂停QSequentialAnimationGroup</p></td></tr>
+<tr class="even topAlign"><td class="tblName"><p><a href="qpropertyanimation.html">QPropertyAnimation</a></p></td><td class="tblDescr"><p>动画的Qt属性</p></td></tr>
+<tr class="odd topAlign"><td class="tblName"><p><a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a></p></td><td class="tblDescr"><p>连续动画组</p></td></tr>
+<tr class="even topAlign"><td class="tblName"><p><a href="qtimeline.html">QTimeLine</a></p></td><td class="tblDescr"><p>动画控制时间线</p></td></tr>
+<tr class="odd topAlign"><td class="tblName"><p><a href="qvariantanimation.html">QVariantAnimation</a></p></td><td class="tblDescr"><p>动画的基类</p></td></tr>
 </table></div>
 <a name="animating-qt-properties"></a>
-<h2 id="animating-qt-properties">Animating Qt Properties</h2>
-<p>As mentioned in the previous section, the <a href="qpropertyanimation.html">QPropertyAnimation</a> class can interpolate over Qt properties. It is often this class that should be used for animation of values; in fact, its superclass, <a href="qvariantanimation.html">QVariantAnimation</a>, has an empty implementation of <a href="qvariantanimation.html#updateCurrentValue">updateCurrentValue()</a>, and does not change any value unless we change it ourselves on the <a href="qvariantanimation.html#valueChanged">valueChanged signal</a>.</p>
-<p>A major reason we chose to animate Qt properties is that it presents us with freedom to animate already existing classes in the Qt API. Notably, the <a href="../qtwidgets/qwidget.html">QWidget</a> class (which we can also embed in a <a href="../qtwidgets/qgraphicsview.html">QGraphicsView</a>) has properties for its bounds, colors, etc. Let's look at a small example:</p>
+<h2 id="animating-qt-properties">动画的Qt属性</h2>
+<p>正如上部分所提及的<a href="qpropertyanimation.html">QPropertyAnimation</a>类可以插入Qt属性.这个类通常应该用于值的动画;实际上,它的超类<a href="qvariantanimation.html">QVariantAnimation</a>,空实现了<a href="qvariantanimation.html#updateCurrentValue">updateCurrentValue()</a>,updateCurrentValue并不会改变任何值除非我们改变它自身上的<a href="qvariantanimation.html#valueChanged">valueChanged信号</a>.</p>
+<p>作为选择动画的Qt属性是因为这样代表着可以在Qt API中自由地动画化一个已经存在的类.特别是<a href="../qtwidgets/qwidget.html">QWidget</a>类(或者嵌入<a href="../qtwidgets/qgraphicsview.html">QGraphicsView</a>的)有边缘,颜色等属性时.请看下面的示例:</p>
 <pre class="cpp">
 
   <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span> button(<span class="string">&quot;Animated Button&quot;</span>);
@@ -94,8 +94,8 @@
   animation<span class="operator">.</span>start();
 
 </pre>
-<p>This code will move <code>button</code> from the top left corner of the screen to the position (250, 250) in 10 seconds (10000 milliseconds).</p>
-<p>The example above will do a linear interpolation between the start and end value. It is also possible to set values situated between the start and end value. The interpolation will then go by these points.</p>
+<p>以上代码将在10s(10000ms)内移动<code>button</code>从屏幕左上角位置到位置(250, 250).</p>
+<p>以上示例将在开始和结束值之间作线性插入.也可以在开始和结束值之间设置一些值.插入后移动时将会经过这些点.</p>
 <pre class="cpp">
 
   <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span> button(<span class="string">&quot;Animated Button&quot;</span>);
@@ -111,8 +111,8 @@
   animation<span class="operator">.</span>start();
 
 </pre>
-<p>In this example, the animation will take the button to (250, 250) in 8 seconds, and then move it back to its original position in the remaining 2 seconds. The movement will be linearly interpolated between these points.</p>
-<p>You also have the possibility to animate values of a <a href="qobject.html">QObject</a> that is not declared as a Qt property. The only requirement is that this value has a setter. You can then subclass the class containing the value and declare a property that uses this setter. Note that each Qt property requires a getter, so you will need to provide a getter yourself if this is not defined.</p>
+<p>在这个示例中,动画将在8s内移动button到位置(250, 250),然后再剩余的2s返回原来的位置. 运动将在这些点内,线性插值.</p>
+<p>也可以为没有声明为<a href="qobject.html">QObject</a>的属性的值动画化.只要对象有这个值的setter.然后可以在包含这个值的类子类化时,使用setter声明为属性.需要注意的是每个Qt属性需要有getter,属性没有定义getter时需要自己提供.</p>
 <pre class="cpp">
 
   <span class="keyword">class</span> MyGraphicsRectItem : <span class="keyword">public</span> <span class="type"><a href="qobject.html">QObject</a></span><span class="operator">,</span> <span class="keyword">public</span> <span class="type"><a href="../qtwidgets/qgraphicsrectitem.html">QGraphicsRectItem</a></span>
@@ -122,11 +122,11 @@
   };
 
 </pre>
-<p>In the above code example, we subclass <a href="../qtwidgets/qgraphicsrectitem.html">QGraphicsRectItem</a> and define a geometry property. We can now animate the widgets geometry even if <a href="../qtwidgets/qgraphicsrectitem.html">QGraphicsRectItem</a> does not provide the geometry property.</p>
-<p>For a general introduction to the Qt property system, see its <a href="properties.html">overview</a>.</p>
+<p>以上示例代码中,子类化了<a href="../qtwidgets/qgraphicsrectitem.html">QGraphicsRectItem</a>,并定义了geometry属性.之后就可以动画化部件的geometry,即使<a href="../qtwidgets/qgraphicsrectitem.html">QGraphicsRectItem</a>没有提供geometry属性.</p>
+<p>关于Qt属性系统的一般介绍,参看<a href="properties.html">overview</a>.</p>
 <a name="animations-and-the-graphics-view-framework"></a>
-<h2 id="animations-and-the-graphics-view-framework">Animations and the Graphics View Framework</h2>
-<p>When you want to animate <a href="../qtwidgets/qgraphicsitem.html">QGraphicsItem</a>s, you also use <a href="qpropertyanimation.html">QPropertyAnimation</a>. However, <a href="../qtwidgets/qgraphicsitem.html">QGraphicsItem</a> does not inherit <a href="qobject.html">QObject</a>. A good solution is to subclass the graphics item you wish to animate. This class will then also inherit <a href="qobject.html">QObject</a>. This way, <a href="qpropertyanimation.html">QPropertyAnimation</a> can be used for <a href="../qtwidgets/qgraphicsitem.html">QGraphicsItem</a>s. The example below shows how this is done. Another possibility is to inherit <a href="../qtwidgets/graphicsview.html#qgraphicswidget">QGraphicsWidget</a>, which already is a <a href="qobject.html">QObject</a>.</p>
+<h2 id="animations-and-the-graphics-view-framework">动画和图形视图框架</h2>
+<p>当想动画化<a href="../qtwidgets/qgraphicsitem.html">QGraphicsItem</a>时,也可以使用<a href="qpropertyanimation.html">QPropertyAnimation</a>.然而,<a href="../qtwidgets/qgraphicsitem.html">QGraphicsItem</a>并没有继承<a href="qobject.html">QObject</a>.好的办法是将想要动画化的图形项子类化,这个类同时也继承<a href="qobject.html">QObject</a>.这样,<a href="qpropertyanimation.html">QPropertyAnimation</a>就可以被用于<a href="../qtwidgets/qgraphicsitem.html">QGraphicsItem</a>.以下示例展示了如何这样做.QGraphicsItem也可以继承<a href="../qtwidgets/graphicsview.html#qgraphicswidget">QGraphicsWidget</a>, QGraphicsWidget是一个<a href="qobject.html">QObject</a>类.</p>
 <pre class="cpp">
 
   <span class="keyword">class</span> Pixmap : <span class="keyword">public</span> <span class="type"><a href="qobject.html">QObject</a></span><span class="operator">,</span> <span class="keyword">public</span> <span class="type"><a href="../qtwidgets/qgraphicspixmapitem.html">QGraphicsPixmapItem</a></span>
@@ -136,11 +136,11 @@
       <span class="operator">.</span><span class="operator">.</span><span class="operator">.</span>
 
 </pre>
-<p>As described in the previous section, we need to define properties that we wish to animate.</p>
-<p>Note that <a href="qobject.html">QObject</a> must be the first class inherited as the meta-object system demands this.</p>
+<p>正如上一节所讲述的,需要为想要动画化的部件定义属性.</p>
+<p>特别地,元对象系统要求<a href="qobject.html">QObject</a>必须被首先继承.</p>
 <a name="easing-curves"></a>
-<h2 id="easing-curves">Easing Curves</h2>
-<p>As mentioned, <a href="qpropertyanimation.html">QPropertyAnimation</a> performs an interpolation between the start and end property value. In addition to adding more key values to the animation, you can also use an easing curve. Easing curves describe a function that controls how the speed of the interpolation between 0 and 1 should be, and are useful if you want to control the speed of an animation without changing the path of the interpolation.</p>
+<h2 id="easing-curves">缓动曲线</h2>
+<p>如前所述,<a href="qpropertyanimation.html">QPropertyAnimation</a>在属性的开始和结束之间执行插值.除了添加更多键值到动画,还可以使用缓动曲线控制动画.缓动曲线描述了控件在0和1之间的插值速度,在不想改变动画的插值路径而想控制动画速度时,非常有用.</p>
 <pre class="cpp">
 
   <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span> button(<span class="string">&quot;Animated Button&quot;</span>);
@@ -156,12 +156,12 @@
   animation<span class="operator">.</span>start();
 
 </pre>
-<p>Here the animation will follow a curve that makes it bounce like a ball as if it was dropped from the start to the end position. <a href="qeasingcurve.html">QEasingCurve</a> has a large collection of curves for you to choose from. These are defined by the <a href="qeasingcurve.html#Type-enum">QEasingCurve::Type</a> enum. If you are in need of another curve, you can also implement one yourself, and register it with <a href="qeasingcurve.html">QEasingCurve</a>.</p>
+<p>这里的动画会像球的下落曲线一样从开始位置弹跳运动到结束位置.<a href="qeasingcurve.html">QEasingCurve</a>收集有大量的曲线供选择.都被定义在<a href="qeasingcurve.html#Type-enum">QEasingCurve::Type</a>枚举类型中.如果需要其他的曲线,也可以自行实现曲线,再注册为<a href="qeasingcurve.html">QEasingCurve</a>.</p>
 <a name="putting-animations-together"></a>
-<h2 id="putting-animations-together">Putting Animations Together</h2>
-<p>An application will often contain more than one animation. For instance, you might want to move more than one graphics item simultaneously or move them in sequence after each other.</p>
-<p>The subclasses of <a href="qanimationgroup.html">QAnimationGroup</a> (<a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a> and <a href="qparallelanimationgroup.html">QParallelAnimationGroup</a>) are containers for other animations so that these animations can be animated either in sequence or parallel. The <a href="qanimationgroup.html">QAnimationGroup</a> is an example of an animation that does not animate properties, but it gets notified of time changes periodically. This enables it to forward those time changes to its contained animations, and thereby controlling when its animations are played.</p>
-<p>Let's look at code examples that use both <a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a> and <a href="qparallelanimationgroup.html">QParallelAnimationGroup</a>, starting off with the latter.</p>
+<h2 id="putting-animations-together">动画组</h2>
+<p>应用程序常常包含有不止一个动画.比如,相似地移动多个图形项,或者依次移动移动图形项.</p>
+<p>The subclasses of <a href="qanimationgroup.html">QAnimationGroup</a> (<a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a>和<a href="qparallelanimationgroup.html">QParallelAnimationGroup</a>)的子类是其他动画的容器,使得这些动画可以有序或平行地动画.<a href="qanimationgroup.html">QAnimationGroup</a>像是一个没有动画属性的动画,但它会定期收到时间改变的通知.这使得它能够发送时间变化给所包含的动画,从而控制被包含动画的播放.</p>
+<p>以下示例使用了<a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a>和<a href="qparallelanimationgroup.html">QParallelAnimationGroup</a>,首先是QParallelAnimationGroup的.</p>
 <pre class="cpp">
 
   <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span> <span class="operator">*</span>bonnie <span class="operator">=</span> <span class="keyword">new</span> <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span>(<span class="string">&quot;Bonnie&quot;</span>);
@@ -183,7 +183,7 @@
   group<span class="operator">-</span><span class="operator">&gt;</span>start();
 
 </pre>
-<p>A parallel group plays more than one animation at the same time. Calling its <a href="qabstractanimation.html#start">start()</a> function will start all animations it governs.</p>
+<p>平行组同时播放不止一个动画.调用它的<a href="qabstractanimation.html#start">start()</a>函数后将会开始播放所有它管理的动画.</p>
 <pre class="cpp">
 
   <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span> button(<span class="string">&quot;Animated Button&quot;</span>);
@@ -207,12 +207,12 @@
   group<span class="operator">.</span>start();
 
 </pre>
-<p>As you no doubt have guessed, <a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a> plays its animations in sequence. It starts the next animation in the list after the previous is finished.</p>
-<p>Since an animation group is an animation itself, you can add it to another group. This way, you can build a tree structure of animations which specifies when the animations are played in relation to each other.</p>
+<p>这是<a href="qsequentialanimationgroup.html">QSequentialAnimationGroup</a> 依次播放动画的示例.它在组内的前一个动画播放完毕后再播放下一个.</p>
+<p>因为动画组本身就是动画,所以也可以被添加到其他动画组.这样就可以将指定了动画播放和关系的动画构建成一组树形结构的动画.</p>
 <a name="animations-and-states"></a>
-<h2 id="animations-and-states">Animations and States</h2>
-<p>When using a <a href="statemachine-api.html">state machine</a>, we can associate one or more animations to a transition between states using a <a href="qsignaltransition.html">QSignalTransition</a> or <a href="qeventtransition.html">QEventTransition</a> class. These classes are both derived from <a href="qabstracttransition.html">QAbstractTransition</a>, which defines the convenience function <a href="qabstracttransition.html#addAnimation">addAnimation()</a> that enables the appending of one or more animations triggered when the transition occurs.</p>
-<p>We also have the possibility to associate properties with the states rather than setting the start and end values ourselves. Below is a complete code example that animates the geometry of a <a href="../qtwidgets/qpushbutton.html">QPushButton</a>.</p>
+<h2 id="animations-and-states">动画与状态机</h2>
+<p>当使用<a href="statemachine-api.html">state machine(状态机)</a>时,可以使用<a href="qsignaltransition.html">QSignalTransition</a>或<a href="qeventtransition.html">QEventTransition</a>类将一个或多个动画关联到状态之间的转换.这两个类都由<a href="qabstracttransition.html">QAbstractTransition</a>派生,QAbstractTransition定义了一个在转换发生时添加一个或多个触发的动画的方便函数<a href="qabstracttransition.html#addAnimation">addAnimation()</a>.</p>
+<p>也可以关联属性到状态机而不是自己设定开始和结束值.以下是动画<a href="../qtwidgets/qpushbutton.html">QPushButton</a>的geometry属性的完整代码示例.</p>
 <pre class="cpp">
 
   <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span> <span class="operator">*</span>button <span class="operator">=</span> <span class="keyword">new</span> <span class="type"><a href="../qtwidgets/qpushbutton.html">QPushButton</a></span>(<span class="string">&quot;Animated Button&quot;</span>);
@@ -238,7 +238,7 @@
   machine<span class="operator">-</span><span class="operator">&gt;</span>start();
 
 </pre>
-<p>For a more comprehensive example of how to use the state machine framework for animations, see the states example (it lives in the <code>examples/animation/states</code> directory).</p>
+<p>关于如何在状态机框架使用动画的更全面的示例,请参看状态机示例(在 <code>examples/animation/states</code>目录下).</p>
 </div>
 <!-- @@@animation-overview.html -->
         </div>
